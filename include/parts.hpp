@@ -4,22 +4,6 @@
 #include "DigiMouse.h"
 
 namespace shigenoy::vmouse {
-constexpr unsigned int mode          = 1; // 1 or 0: LED is connected pin0 or pin1 depend on model
-constexpr unsigned char MOUSE_DELTA  = 1;
-constexpr unsigned int SLEEP_TIME_MS = 5; // ms
-
-void
-LEDon()
-{
-    digitalWrite(mode, HIGH);
-}
-
-void
-LEDoff()
-{
-    digitalWrite(mode, LOW);
-}
-
 void
 mouse_move(const char deltaX, const int count, const int delay)
 {
@@ -29,20 +13,57 @@ mouse_move(const char deltaX, const int count, const int delay)
         DigiMouse.delay(delay);
     }
 }
+
 void
 prepare_supply(const int delay)
 {
-    DigiMouse.rightClick();
-    DigiMouse.delay(delay);
+    // DigiMouse.rightClick();
+    // DigiMouse.delay(delay);
+    // /*
+    {
+        // RIGHT Click
+        DigiMouse.setButtons(2);
+        mouse_move(-1, 1, delay);
+        // Unclick
+        DigiMouse.setButtons(0);
+        mouse_move(1, 1, delay);
+    }
+    // */
 }
 
 void
 deploy_supply(const int delay)
 {
 
-    DigiMouse.leftClick();
-    DigiMouse.delay(delay);
+    // DigiMouse.leftClick();
+    // DigiMouse.delay(delay);
+    // /*
+    {
+        // Click
+        DigiMouse.setButtons(1);
+        mouse_move(-1, 1, delay);
+        // Unclick
+        DigiMouse.setButtons(0);
+        mouse_move(1, 1, delay);
+    }
+    // */
 }
+
+void
+prepare_medic(const int delay)
+{
+    DigiMouse.scroll(10);
+    mouse_move(-1, 1, delay);
+}
+
+void
+deploy_medic(const int delay)
+{
+    deploy_supply(delay);
+    DigiMouse.scroll(-10);
+    mouse_move(1, 1, delay);
+}
+
 } // namespace shigenoy::vmouse
 
 #endif

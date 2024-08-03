@@ -11,7 +11,23 @@
 
 #include "parts.hpp"
 
-using namespace shigenoy::vmouse;
+namespace {
+constexpr unsigned int mode          = 1; // 1 or 0: LED is connected pin0 or pin1 depend on model
+constexpr unsigned char MOUSE_DELTA  = 1;
+constexpr unsigned int SLEEP_TIME_MS = 20; // ms
+
+void
+LEDon()
+{
+    digitalWrite(mode, HIGH);
+}
+
+void
+LEDoff()
+{
+    digitalWrite(mode, LOW);
+}
+} // namespace
 
 void
 setup()
@@ -23,20 +39,29 @@ setup()
 void
 loop()
 {
-    prepare_supply(SLEEP_TIME_MS * 5);
-    for (int ctx = 3; ctx > 0; --ctx)
+    int ctx{ 10 };
     {
         LEDon();
-        for (int i = 0; i < ctx; ++i)
-        {
-            mouse_move(-MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
-        }
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::prepare_medic(SLEEP_TIME_MS);
         LEDoff();
 
-        for (int i = 0; i < ctx; ++i)
-        {
-            mouse_move(MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
-        }
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::deploy_medic(SLEEP_TIME_MS);
     }
-    deploy_supply(SLEEP_TIME_MS * 5);
+    for (ctx = 9; ctx > 1; --ctx)
+    {
+        LEDon();
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+
+        LEDoff();
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+    }
+    {
+        ctx = 1;
+        shigenoy::vmouse::prepare_supply(SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::deploy_supply(SLEEP_TIME_MS);
+    }
 }
