@@ -14,7 +14,7 @@
 namespace {
 constexpr unsigned int mode          = 1; // 1 or 0: LED is connected pin0 or pin1 depend on model
 constexpr unsigned char MOUSE_DELTA  = 1;
-constexpr unsigned int SLEEP_TIME_MS = 20; // ms
+constexpr unsigned int SLEEP_TIME_MS = 5; // ms
 
 void
 LEDon()

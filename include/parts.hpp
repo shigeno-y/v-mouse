@@ -23,10 +23,10 @@ prepare_supply(const int delay)
     {
         // RIGHT Click
         DigiMouse.setButtons(2);
-        mouse_move(-1, 1, delay);
+        mouse_move(-1, 1, delay*10);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay);
+        mouse_move(1, 1, delay*10);
     }
     // */
 }
@@ -41,10 +41,10 @@ deploy_supply(const int delay)
     {
         // Click
         DigiMouse.setButtons(1);
-        mouse_move(-1, 1, delay);
+        mouse_move(-1, 1, delay*20);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay);
+        mouse_move(1, 1, delay*20);
     }
     // */
 }
@@ -52,15 +52,21 @@ deploy_supply(const int delay)
 void
 prepare_medic(const int delay)
 {
-    DigiMouse.scroll(10);
+    DigiMouse.scroll(-10);
     mouse_move(-1, 1, delay);
 }
 
 void
 deploy_medic(const int delay)
 {
-    deploy_supply(delay);
-    DigiMouse.scroll(-10);
+    // Click
+    DigiMouse.setButtons(1);
+    mouse_move(-1, 1, delay*20);
+    // Unclick
+    DigiMouse.setButtons(0);
+    mouse_move(1, 1, delay*20);
+
+    DigiMouse.scroll(10);
     mouse_move(1, 1, delay);
 }
 
