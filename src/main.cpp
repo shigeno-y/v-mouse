@@ -13,28 +13,30 @@
 
 using namespace shigenoy::vmouse;
 
-void setup()
+void
+setup()
 {
-  pinMode(mode, OUTPUT);
-  DigiMouse.begin();
+    pinMode(mode, OUTPUT);
+    DigiMouse.begin();
 }
 
-void loop()
+void
+loop()
 {
-  prepare_supply(SLEEP_TIME_MS * 5);
-  for (int ctx = 3; ctx > 0; --ctx)
-  {
-    LEDon();
-    for (int i = 0; i < ctx; ++i)
+    prepare_supply(SLEEP_TIME_MS * 5);
+    for (int ctx = 3; ctx > 0; --ctx)
     {
-      mouse_move(-MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
-    }
-    LEDoff();
+        LEDon();
+        for (int i = 0; i < ctx; ++i)
+        {
+            mouse_move(-MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        }
+        LEDoff();
 
-    for (int i = 0; i < ctx; ++i)
-    {
-      mouse_move(MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        for (int i = 0; i < ctx; ++i)
+        {
+            mouse_move(MOUSE_DELTA, 500 / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        }
     }
-  }
-  deploy_supply(SLEEP_TIME_MS * 5);
+    deploy_supply(SLEEP_TIME_MS * 5);
 }
