@@ -42,12 +42,12 @@ loop()
     int ctx{ 10 };
     {
         LEDon();
-        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         shigenoy::vmouse::prepare_medic(SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         LEDoff();
 
-        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         shigenoy::vmouse::deploy_medic(SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
     }
     for (ctx = 9; ctx > 1; --ctx)
     {
