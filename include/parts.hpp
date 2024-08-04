@@ -4,6 +4,40 @@
 #include "DigiMouse.h"
 
 namespace shigenoy::vmouse {
+size_t elapsed{ 0 };
+
+void
+LEDon(const unsigned int mode)
+{
+    digitalWrite(mode, HIGH);
+}
+
+void
+LEDoff(const unsigned int mode)
+{
+    digitalWrite(mode, LOW);
+}
+
+/*
+    55 * 1000 [ms]
+    25 * 121 * 1000 * 1000 [tick]
+*/
+
+void
+LEDwave(const unsigned int mode, int tick)
+{
+    tick /= 550;
+    const float v = sin(static_cast<double>(tick * tick) / 50.);
+    if (signbit(v))
+    {
+        LEDoff(mode);
+    }
+    else
+    {
+        LEDon(mode);
+    }
+}
+
 void
 mouse_move(const char deltaX, const int count, const int delay)
 {
@@ -11,6 +45,8 @@ mouse_move(const char deltaX, const int count, const int delay)
     {
         DigiMouse.moveX(deltaX);
         DigiMouse.delay(delay);
+        elapsed += delay;
+        LEDwave(1, elapsed);
     }
 }
 
@@ -23,10 +59,10 @@ prepare_supply(const int delay)
     {
         // RIGHT Click
         DigiMouse.setButtons(2);
-        mouse_move(-1, 1, delay*10);
+        mouse_move(-1, 1, delay * 10);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay*10);
+        mouse_move(1, 1, delay * 10);
     }
     // */
 }
@@ -41,12 +77,13 @@ deploy_supply(const int delay)
     {
         // Click
         DigiMouse.setButtons(1);
-        mouse_move(-1, 1, delay*20);
+        mouse_move(-1, 1, delay * 20);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay*20);
+        mouse_move(1, 1, delay * 20);
     }
     // */
+    elapsed=0;
 }
 
 void
@@ -61,10 +98,10 @@ deploy_medic(const int delay)
 {
     // Click
     DigiMouse.setButtons(1);
-    mouse_move(-1, 1, delay*20);
+    mouse_move(-1, 1, delay * 20);
     // Unclick
     DigiMouse.setButtons(0);
-    mouse_move(1, 1, delay*20);
+    mouse_move(1, 1, delay * 20);
 
     DigiMouse.scroll(10);
     mouse_move(1, 1, delay);
