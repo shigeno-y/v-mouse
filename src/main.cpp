@@ -23,7 +23,8 @@ setup()
     pinMode(mode, OUTPUT);
     DigiMouse.begin();
 }
-
+//#define USE_MAIN_BRANCH
+#ifdef USE_MAIN_BRANCH
 void
 loop()
 {
@@ -31,27 +32,54 @@ loop()
     {
         shigenoy::vmouse::LEDon(mode);
         shigenoy::vmouse::prepare_medic(SLEEP_TIME_MS);
-        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         shigenoy::vmouse::LEDoff(mode);
 
         shigenoy::vmouse::deploy_medic(SLEEP_TIME_MS);
-        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
     }
     for (ctx = 9; ctx > 1; --ctx)
     {
         shigenoy::vmouse::LEDon(mode);
-        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
 
         shigenoy::vmouse::LEDoff(mode);
-        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
     }
     {
         ctx = 1;
         shigenoy::vmouse::prepare_supply(SLEEP_TIME_MS);
-        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(-MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         shigenoy::vmouse::LEDon(mode);
-        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(MOUSE_DELTA, 0, 500 * ctx / SLEEP_TIME_MS, SLEEP_TIME_MS);
         shigenoy::vmouse::deploy_supply(SLEEP_TIME_MS);
         shigenoy::vmouse::LEDoff(mode);
     }
 }
+#else
+#    include "spiral.hpp"
+
+void
+loop()
+{
+    shigenoy::vmouse::Spiral s(55000, 50.);
+    int dx{ 0 }, dy{ 0 };
+    while (s.update(SLEEP_TIME_MS, dx, dy))
+    {
+        shigenoy::vmouse::mouse_move(dx, dy, 1, SLEEP_TIME_MS);
+        DigiMouse.delay(SLEEP_TIME_MS);
+    }
+
+    shigenoy::vmouse::LEDon(mode);
+    shigenoy::vmouse::prepare_supply(SLEEP_TIME_MS);
+    {
+        int x{ 0 }, y{ 0 };
+        s.getCurrentPos(x, y);
+
+        shigenoy::vmouse::mouse_move((x < 0) ? 1 : -1, 0, abs(x), SLEEP_TIME_MS);
+        shigenoy::vmouse::mouse_move(0, (y < 0) ? 1 : -1, abs(y), SLEEP_TIME_MS);
+    }
+    shigenoy::vmouse::deploy_supply(SLEEP_TIME_MS);
+    shigenoy::vmouse::LEDoff(mode);
+}
+#endif

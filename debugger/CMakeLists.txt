@@ -9,6 +9,8 @@ target_sources(
     ${PROJECT_NAME}
     PRIVATE src/main.cpp include/DigiMouse.h
     ${PROJECT_SOURCE_DIR}/../src/main.cpp
+    ${PROJECT_SOURCE_DIR}/../include/spiral.hpp
+    ${PROJECT_SOURCE_DIR}/../src/spiral.cpp
 )
 
 target_include_directories(

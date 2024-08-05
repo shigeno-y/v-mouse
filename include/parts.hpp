@@ -3,9 +3,12 @@
 
 #include "DigiMouse.h"
 
-namespace shigenoy::vmouse {
-size_t elapsed{ 0 };
+#ifdef _MSC_FULL_VER
+#    include <iostream>
+#    include <windows.h>
+#endif
 
+namespace shigenoy::vmouse {
 void
 LEDon(const unsigned int mode)
 {
@@ -18,35 +21,25 @@ LEDoff(const unsigned int mode)
     digitalWrite(mode, LOW);
 }
 
-/*
-    55 * 1000 [ms]
-    25 * 121 * 1000 * 1000 [tick]
-*/
-
 void
-LEDwave(const unsigned int mode, int tick)
-{
-    tick /= 550;
-    const float v = sin(static_cast<double>(tick * tick) / 50.);
-    if (signbit(v))
-    {
-        LEDoff(mode);
-    }
-    else
-    {
-        LEDon(mode);
-    }
-}
-
-void
-mouse_move(const char deltaX, const int count, const int delay)
+mouse_move(const char deltaX, const char deltaY, const int count, const int delay)
 {
     for (int i = 0; i < count; ++i)
     {
-        DigiMouse.moveX(deltaX);
+        DigiMouse.move(deltaX, deltaY, 0);
+#ifdef _MSC_FULL_VER
+        {
+            std::cout << "mouse_move\t" << static_cast<int>(deltaX) << "\t"
+                      << static_cast<int>(deltaY) << std::endl;
+        }
+        {
+            POINT pos{};
+            GetCursorPos(&pos);
+            SetCursorPos(pos.x + deltaX, pos.y + deltaY);
+        }
+
+#endif
         DigiMouse.delay(delay);
-        elapsed += delay;
-        LEDwave(1, elapsed);
     }
 }
 
@@ -59,10 +52,10 @@ prepare_supply(const int delay)
     {
         // RIGHT Click
         DigiMouse.setButtons(2);
-        mouse_move(-1, 1, delay * 10);
+        mouse_move(-1, 0, 1, delay * 10);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay * 10);
+        mouse_move(1, 0, 1, delay * 10);
     }
     // */
 }
@@ -77,20 +70,19 @@ deploy_supply(const int delay)
     {
         // Click
         DigiMouse.setButtons(1);
-        mouse_move(-1, 1, delay * 20);
+        mouse_move(-1, 0, 1, delay * 20);
         // Unclick
         DigiMouse.setButtons(0);
-        mouse_move(1, 1, delay * 20);
+        mouse_move(1, 0, 1, delay * 20);
     }
     // */
-    elapsed=0;
 }
 
 void
 prepare_medic(const int delay)
 {
     DigiMouse.scroll(-10);
-    mouse_move(-1, 1, delay);
+    mouse_move(-1, 0, 1, delay);
 }
 
 void
@@ -98,13 +90,13 @@ deploy_medic(const int delay)
 {
     // Click
     DigiMouse.setButtons(1);
-    mouse_move(-1, 1, delay * 20);
+    mouse_move(-1, 0, 1, delay * 20);
     // Unclick
     DigiMouse.setButtons(0);
-    mouse_move(1, 1, delay * 20);
+    mouse_move(1, 0, 1, delay * 20);
 
     DigiMouse.scroll(10);
-    mouse_move(1, 1, delay);
+    mouse_move(1, 0, 1, delay);
 }
 
 } // namespace shigenoy::vmouse

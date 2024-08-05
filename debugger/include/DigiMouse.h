@@ -1,30 +1,31 @@
 /*
 This file is DUMMY for plain c++ debug.
 */
-#ifndef MY_DIGIMOUSE_H_INCLUDED
-#define MY_DIGIMOUSE_H_INCLUDED
+#ifdef _MSC_FULL_VER
+#    ifndef MY_DIGIMOUSE_H_INCLUDED
+#        define MY_DIGIMOUSE_H_INCLUDED
 
-#include <chrono>
-#include <cstdint>
-#include <iostream>
+#        include <chrono>
+#        include <cstdint>
+#        include <iostream>
 
-#define HIGH   255
-#define LOW    0
-#define OUTPUT 1
+#        define HIGH   255
+#        define LOW    0
+#        define OUTPUT 1
 
 typedef std::uint8_t uchar;
 
-#define PROGMEM
-#define REPORT_SIZE 4
+#        define PROGMEM
+#        define REPORT_SIZE 4
 
 static const uchar* rt_usbHidReportDescriptor = NULL;
 static uchar rt_usbHidReportDescriptorSize    = 0;
 static const uchar* rt_usbDeviceDescriptor    = NULL;
 static uchar rt_usbDeviceDescriptorSize       = 0;
 
-#define MOUSEBTN_LEFT_MASK   0x01
-#define MOUSEBTN_RIGHT_MASK  0x02
-#define MOUSEBTN_MIDDLE_MASK 0x04
+#        define MOUSEBTN_LEFT_MASK   0x01
+#        define MOUSEBTN_RIGHT_MASK  0x02
+#        define MOUSEBTN_MIDDLE_MASK 0x04
 
 // TODO: Work around Arduino 12 issues better.
 //#include <WConstants.h>
@@ -41,7 +42,7 @@ static unsigned char last_sent_report[REPORT_SIZE];
 uchar reportBuffer[REPORT_SIZE];
 
 // report frequency set to default of 50hz
-#define DIGIMOUSE_DEFAULT_REPORT_INTERVAL 20
+#        define DIGIMOUSE_DEFAULT_REPORT_INTERVAL 20
 static unsigned char must_report = 0;
 static unsigned char idle_rate   = DIGIMOUSE_DEFAULT_REPORT_INTERVAL / 4; // in units of 4ms
 // new minimum report frequency system:
@@ -82,7 +83,7 @@ const PROGMEM unsigned char mouse_usbHidReportDescriptor[] = {
     (unsigned char)0xc0                       // END_COLLECTION
 };
 
-#define USBDESCR_DEVICE 1
+#        define USBDESCR_DEVICE 1
 
 const unsigned char usbDescrDevice[] PROGMEM = {
     /* USB device descriptor */
@@ -97,21 +98,21 @@ const unsigned char usbDescrDevice[] PROGMEM = {
     0, /* 2 bytes */
     0, /* 2 bytes */
     0, /* 2 bytes */
-#if USB_CFG_VENDOR_NAME_LEN
+#        if USB_CFG_VENDOR_NAME_LEN
     1, /* manufacturer string index */
-#else
+#        else
     0, /* manufacturer string index */
-#endif
-#if USB_CFG_DEVICE_NAME_LEN
+#        endif
+#        if USB_CFG_DEVICE_NAME_LEN
     2, /* product string index */
-#else
+#        else
     0, /* product string index */
-#endif
-#if USB_CFG_SERIAL_NUMBER_LENGTH
+#        endif
+#        if USB_CFG_SERIAL_NUMBER_LENGTH
     3, /* serial number string index */
-#else
+#        else
     0, /* serial number string index */
-#endif
+#        endif
     1, /* number of configurations */
 };
 
@@ -298,9 +299,9 @@ public:
 // create the global singleton DigiMouse
 DigiMouseDevice DigiMouse = DigiMouseDevice();
 
-#ifdef __cplusplus
+#        ifdef __cplusplus
 extern "C" {
-#endif
+#        endif
 // USB_PUBLIC uchar usbFunctionSetup
 
 uchar
@@ -315,8 +316,9 @@ usbFunctionDescriptor(struct usbRequest* rq)
     return 0;
 }
 
-#ifdef __cplusplus
+#        ifdef __cplusplus
 } // extern "C"
-#endif
+#        endif
 
-#endif // MY_DIGIMOUSE_H_INCLUDED
+#    endif // MY_DIGIMOUSE_H_INCLUDED
+#endif
