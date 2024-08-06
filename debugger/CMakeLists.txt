@@ -17,6 +17,7 @@ target_sources(
     ${PROJECT_SOURCE_DIR}/../src/parts.cpp
     ${PROJECT_SOURCE_DIR}/../include/spiral.hpp
     ${PROJECT_SOURCE_DIR}/../src/spiral.cpp
+    ${PROJECT_SOURCE_DIR}/../include/code.hpp
 )
 
 target_include_directories(

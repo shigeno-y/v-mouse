@@ -1,5 +1,7 @@
 ﻿// SPDX-License-Identifier: Apache-2.0
 
+#include "temporary_directory.hpp"
+
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -59,7 +61,9 @@ main(int argc, char* argv[])
     }
     // */
 
-    std::this_thread::sleep_for(std::chrono::seconds{ 5 });
+    usdRemoteViewer::messaging::tempfile::TemporaryDirectory tmp{ {}, {}, {}, false };
+    usdRemoteViewer::messaging::tempfile::logfile = std::ofstream{ tmp.tmpfile() };
+
     setup();
 
     loop();

@@ -11,10 +11,8 @@
 
 #include "parts.hpp"
 
-#include <Arduino.h>
-
-#ifdef _MSC_FULL_VER
-#    include "temporary_directory.hpp"
+#ifndef _MSC_FULL_VER
+#    include <Arduino.h>
 #endif
 
 namespace {
@@ -34,11 +32,11 @@ setup()
 }
 
 //#define USE_MAIN_BRANCH
-#ifdef USE_MAIN_BRANCH
+//#define USE_SPIRAL_DIRECT
+#if defined USE_MAIN_BRANCH
 void
 loop()
 {
-    using namespace shigenoy::vmouse;
     int ctx{ 10 };
     {
         shigenoy::vmouse::LEDon(mode);
@@ -67,18 +65,13 @@ loop()
         shigenoy::vmouse::LEDoff(mode);
     }
 }
-#else
+#elif defined USE_SPIRAL_DIRECT
 #    include "spiral.hpp"
 
 void
 loop()
 {
-#    ifdef _MSC_FULL_VER
-    usdRemoteViewer::messaging::tempfile::TemporaryDirectory tmp{ {}, {}, {}, false };
-    usdRemoteViewer::messaging::tempfile::logfile = std::ofstream{ tmp.tmpfile() };
-#    endif
-
-    shigenoy::vmouse::Spiral s(55000, 50.);
+    shigenoy::vmouse::Spiral s(55000, 25.);
     int dx{ 0 }, dy{ 0 };
     while (s.update(SLEEP_TIME_MS, dx, dy))
     {
@@ -97,4 +90,36 @@ loop()
     shigenoy::vmouse::deploy_supply(SLEEP_TIME_MS);
     shigenoy::vmouse::LEDoff(mode);
 }
+#else
+#    include "code.hpp"
+
+void
+loop()
+{
+    bool prepared{ false };
+    size_t tick{ 0 }, idx{ 0 };
+    while (idx < 1700)
+    {
+#    ifdef _MSC_FULL_VER
+        const char pw  = pattern_length[idx++];
+        const char ctr = pattern_length[idx++];
+#    else
+        const char pw  = pgm_read_byte( (pattern_length+(idx++)) );
+        const char ctr = pgm_read_byte( (pattern_length+(idx++)) );
+#    endif
+        const char dx{ pw >> 4 }, dy{ pw & 0x0F };
+        shigenoy::vmouse::mouse_move(dx - 4, dy - 4, ctr, SLEEP_TIME_MS);
+        tick += ctr * SLEEP_TIME_MS;
+        if (!prepared && tick >= 55000)
+        {
+            prepared = true;
+            shigenoy::vmouse::LEDon(mode);
+            shigenoy::vmouse::prepare_supply(SLEEP_TIME_MS);
+        }
+    }
+
+    shigenoy::vmouse::deploy_supply(SLEEP_TIME_MS);
+    shigenoy::vmouse::LEDoff(mode);
+}
+
 #endif

@@ -60,6 +60,7 @@ shigenoy::vmouse::mouse_move(const char deltaX, const char deltaY, const int cou
     {
         DigiMouse.move(deltaX, deltaY, 0);
 #ifdef _MSC_FULL_VER
+        /*
         {
             usdRemoteViewer::messaging::tempfile::logfile << static_cast<int>(deltaX) << "\t"
                                                           << static_cast<int>(deltaY) << std::endl;
