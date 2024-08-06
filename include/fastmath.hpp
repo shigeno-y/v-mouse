@@ -1,6 +1,10 @@
 #ifndef SHIGENO_Y_VMOUSE_FASTMATH_INCLUDED
 #define SHIGENO_Y_VMOUSE_FASTMATH_INCLUDED
 
+#ifdef _MSC_FULL_VER
+#    include <cmath>
+#else
+
 namespace nick_sincos {
 // thanks to:
 // https://yuqlid.sakura.ne.jp/dokuwiki/fast_sin_cos
@@ -110,4 +114,33 @@ cos(float theta)
 }
 
 } // namespace nick_sincos
+
+namespace takashiijiri {
+//---Algorithm float(IEEE754)用------
+inline float
+sqrt(const float& x)
+{
+    float xHalf = 0.5f * x;
+    int tmp     = 0x5F3759DF - (*(int*)&x >> 1); //initial guess
+    float xRes  = *(float*)&tmp;
+
+    xRes *= (1.5f - (xHalf * xRes * xRes));
+    //xRes *= ( 1.5f - ( xHalf * xRes * xRes ) );//コメントアウトを外すと精度が上がる
+    return xRes * x;
+}
+//---Algorithm double(IEEE754)用------
+inline double
+sqrt(const double& x)
+{
+    double xHalf      = 0.5 * x;
+    long long int tmp = 0x5FE6EB50C7B537AAl - (*(long long int*)&x >> 1); //initial guess
+    double xRes       = *(double*)&tmp;
+
+    xRes *= (1.5 - (xHalf * xRes * xRes));
+    //xRes *= ( 1.5 - ( xHalf * xRes * xRes ) );//コメントアウトを外すと精度が上がる
+    return xRes * x;
+}
+} // namespace takashiijiri
+
+#endif
 #endif

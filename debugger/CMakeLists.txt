@@ -6,9 +6,15 @@ project(debugger LANGUAGES CXX)
 add_executable(${PROJECT_NAME})
 
 target_sources(
-    ${PROJECT_NAME}
-    PRIVATE src/main.cpp include/DigiMouse.h
+    ${PROJECT_NAME} PRIVATE
+    src/debugger.cpp
+    src/DigiMouse.cpp
+    src/temporary_directory.cpp
+    include/DigiMouse.h
+    include/temporary_directory.hpp
     ${PROJECT_SOURCE_DIR}/../src/main.cpp
+    ${PROJECT_SOURCE_DIR}/../include/parts.hpp
+    ${PROJECT_SOURCE_DIR}/../src/parts.cpp
     ${PROJECT_SOURCE_DIR}/../include/spiral.hpp
     ${PROJECT_SOURCE_DIR}/../src/spiral.cpp
 )

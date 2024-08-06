@@ -11,23 +11,34 @@
 
 #include "parts.hpp"
 
+#include <Arduino.h>
+
+#ifdef _MSC_FULL_VER
+#    include "temporary_directory.hpp"
+#endif
+
 namespace {
 constexpr unsigned int mode          = 1; // 1 or 0: LED is connected pin0 or pin1 depend on model
 constexpr unsigned char MOUSE_DELTA  = 1;
-constexpr unsigned int SLEEP_TIME_MS = 5; // ms
+constexpr unsigned int SLEEP_TIME_MS = 50; // ms
 } // namespace
+
+#ifndef abs
+#    define abs(x) ((x) > 0 ? (x) : -(x))
+#endif
 
 void
 setup()
 {
-    pinMode(mode, OUTPUT);
-    DigiMouse.begin();
+    shigenoy::vmouse::mySetup(mode);
 }
+
 //#define USE_MAIN_BRANCH
 #ifdef USE_MAIN_BRANCH
 void
 loop()
 {
+    using namespace shigenoy::vmouse;
     int ctx{ 10 };
     {
         shigenoy::vmouse::LEDon(mode);
@@ -62,12 +73,16 @@ loop()
 void
 loop()
 {
+#    ifdef _MSC_FULL_VER
+    usdRemoteViewer::messaging::tempfile::TemporaryDirectory tmp{ {}, {}, {}, false };
+    usdRemoteViewer::messaging::tempfile::logfile = std::ofstream{ tmp.tmpfile() };
+#    endif
+
     shigenoy::vmouse::Spiral s(55000, 50.);
     int dx{ 0 }, dy{ 0 };
     while (s.update(SLEEP_TIME_MS, dx, dy))
     {
         shigenoy::vmouse::mouse_move(dx, dy, 1, SLEEP_TIME_MS);
-        DigiMouse.delay(SLEEP_TIME_MS);
     }
 
     shigenoy::vmouse::LEDon(mode);
